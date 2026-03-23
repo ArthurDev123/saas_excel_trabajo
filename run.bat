@@ -1,0 +1,6 @@
+@echo off
+echo Instalando dependencias...
+pip install -r requirements.txt
+echo.
+echo Iniciando JobHunter...
+python -m flask --app app.app run

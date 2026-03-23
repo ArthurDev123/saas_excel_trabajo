@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Buscar Trabajo - JobHunter{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="mb-3" style="color: var(--primary);">
+            <i class="bi bi-search me-2"></i>Buscar Trabajo
+        </h2>
+        <p class="text-muted">Explora los principales portales de empleo para encontrar nuevas oportunidades</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for portal in portales %}
+    <div class="col-md-4 col-sm-6">
+        <a href="{{ portal.url }}" target="_blank" class="text-decoration-none">
+            <div class="card portal-card h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="bi bi-globe" style="font-size: 2rem; color: var(--secondary);"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1" style="color: var(--primary);">{{ portal.nombre }}</h5>
+                        <small class="text-muted">Ver ofertas <i class="bi bi-arrow-right"></i></small>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">
+            <div class="card-body text-center text-white py-4">
+                <h4><i class="bi bi-lightbulb me-2"></i>Consejo</h4>
+                <p class="mb-0">Mantén un registro de todas tus postulaciones en la sección "Ofertas Aplicadas" para no perder el control de tu búsqueda de empleo.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

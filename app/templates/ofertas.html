@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Ofertas Aplicadas - JobHunter{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2 class="mb-3" style="color: var(--primary);">
+            <i class="bi bi-list-check me-2"></i>Mis Ofertas Aplicadas
+        </h2>
+        <p class="text-muted">Gestiona y controla el estado de todas tus postulaciones</p>
+    </div>
+    <div class="col-md-4 text-md-end">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarOfertaModal">
+            <i class="bi bi-plus-circle me-2"></i>Nueva Oferta
+        </button>
+    </div>
+</div>
+
+{% if ofertas %}
+<div class="row g-4">
+    {% for oferta in ofertas %}
+    <div class="col-12">
+        <div class="card animate-fade" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <h5 class="card-title mb-1" style="color: var(--primary);">{{ oferta.empresa }}</h5>
+                        <span class="text-muted small">{{ oferta.titulo }}</span>
+                    </div>
+                    <div class="col-md-2">
+                        <p class="mb-0 small text-muted"><i class="bi bi-calendar me-1"></i>{{ oferta.fecha_aplicacion.strftime('%d/%m/%Y') }}</p>
+                    </div>
+                    <div class="col-md-2">
+                        <span class="badge bg-secondary">{{ oferta.tipo }}</span>
+                    </div>
+                    <div class="col-md-3">
+                        <form method="POST" action="{{ url_for('actualizar_estado', id=oferta.id) }}">
+                            <select name="estado" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <option value="en_espera" {% if oferta.estado == 'en_espera' %}selected{% endif %}>En espera</option>
+                                <option value="primera_entrevista" {% if oferta.estado == 'primera_entrevista' %}selected{% endif %}>Primera entrevista</option>
+                                <option value="aceptada" {% if oferta.estado == 'aceptada' %}selected{% endif %}>Aceptada</option>
+                                <option value="rechazada" {% if oferta.estado == 'rechazada' %}selected{% endif %}>Rechazada</option>
+                            </select>
+                        </form>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <span class="estado-badge estado-{{ oferta.estado }}">
+                            {% if oferta.estado == 'en_espera' %}En espera
+                            {% elif oferta.estado == 'primera_entrevista' %}Primera entrevista
+                            {% elif oferta.estado == 'aceptada' %}Aceptada
+                            {% else %}Rechazada{% endif %}
+                        </span>
+                        <form method="POST" action="{{ url_for('eliminar_oferta', id=oferta.id) }}" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-link text-danger" onclick="return confirm('¿Eliminar esta oferta?')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% if oferta.salario or oferta.observaciones %}
+                <div class="mt-2 pt-2 border-top">
+                    {% if oferta.salario %}<small class="text-muted me-3"><i class="bi bi-currency-dollar me-1"></i>{{ oferta.salario }}</small>{% endif %}
+                    {% if oferta.observaciones %}<small class="text-muted">{{ oferta.observaciones }}</small>{% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="bi bi-briefcase"></i>
+    <h4 class="mt-3">No hay ofertas todavía</h4>
+    <p>Comienza agregando tus primeras postulaciones</p>
+    <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#agregarOfertaModal">
+        <i class="bi bi-plus-circle me-2"></i>Agregar Primera Oferta
+    </button>
+</div>
+{% endif %}
+
+<div class="modal fade" id="agregarOfertaModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: var(--primary); color: white;">
+                <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Nueva Oferta</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('agregar_oferta') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Empresa *</label>
+                        <input type="text" name="empresa" class="form-control" required placeholder="Nombre de la empresa">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Título del Puesto *</label>
+                        <input type="text" name="titulo" class="form-control" required placeholder="Ej: Desarrollador Python">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fecha de Aplicación *</label>
+                        <input type="date" name="fecha_aplicacion" class="form-control" required value="{{ today }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Empleo</label>
+                        <select name="tipo" class="form-select">
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Remoto">Remoto</option>
+                            <option value="Contrato">Contrato</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Practicas">Prácticas</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Salario (opcional)</label>
+                        <input type="text" name="salario" class="form-control" placeholder="Ej: $50,000 - $70,000">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observaciones</label>
+                        <textarea name="observaciones" class="form-control" rows="3" placeholder="Notas adicionales..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Oferta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
