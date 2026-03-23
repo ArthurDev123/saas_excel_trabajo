@@ -29,7 +29,7 @@
                         <span class="text-muted small">{{ oferta.titulo }}</span>
                     </div>
                     <div class="col-md-2">
-                        <p class="mb-0 small text-muted"><i class="bi bi-calendar me-1"></i>{{ oferta.fecha_aplicacion.strftime('%d/%m/%Y') }}</p>
+                        <p class="mb-0 small text-muted"><i class="bi bi-calendar me-1"></i>{{ oferta.fecha_aplicacion[8:10] + '/' + oferta.fecha_aplicacion[5:7] + '/' + oferta.fecha_aplicacion[0:4] }}</p>
                     </div>
                     <div class="col-md-2">
                         <span class="badge bg-secondary">{{ oferta.tipo }}</span>
