@@ -143,7 +143,7 @@ def buscar_trabajo():
 
 @app.route('/agregar-oferta', methods=['POST'])
 @login_required
-def agregar_oferta_route():
+def agregar_oferta():
     user = get_user()
     empresa = request.form.get('empresa')
     titulo = request.form.get('titulo')
@@ -161,7 +161,7 @@ def agregar_oferta_route():
 
 @app.route('/actualizar-estado/<int:id>', methods=['POST'])
 @login_required
-def actualizar_estado_route(id):
+def actualizar_estado(id):
     user = get_user()
     nuevo_estado = request.form.get('estado')
     if actualizar_estado_db(id, nuevo_estado, user['id']):
@@ -170,7 +170,7 @@ def actualizar_estado_route(id):
 
 @app.route('/eliminar-oferta/<int:id>', methods=['POST'])
 @login_required
-def eliminar_oferta_route(id):
+def eliminar_oferta(id):
     user = get_user()
     if eliminar_oferta_db(id, user['id']):
         flash('Oferta eliminada', 'success')
